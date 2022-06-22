@@ -4,16 +4,16 @@ import { CheckCircle, Lock } from 'phosphor-react';
 
 type LessonHeaderProps = {
   lessonType: 'live' | 'class';
-  isAvaliable: boolean;
+  isAvailable: boolean;
 };
 
 export function LessonHeader({
-  isAvaliable,
+  isAvailable,
   lessonType,
 }: LessonHeaderProps): JSX.Element {
   return (
     <header className="flex items-center justify-between">
-      {isAvaliable ? (
+      {isAvailable ? (
         <span className="text-sm font-medium text-blue-500 flex items-center gap-2">
           <CheckCircle size={20} />
           Conteúdo Liberado

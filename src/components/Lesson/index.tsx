@@ -1,26 +1,40 @@
+/* eslint-disable import/no-duplicates */
 // import { Container } from './styles';
+
+import { isPast, format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
 import { LessonHeader } from '../LessonHeader';
 
 type LessonProps = {
   title: string;
   slug: string;
-  avaliableAt: Date;
+  availableAt: Date;
   lessonType: 'live' | 'class';
 };
 
 export function Lesson({
-  avaliableAt,
+  availableAt,
   lessonType,
   slug,
   title,
 }: LessonProps): JSX.Element {
+  const isAvailable = isPast(availableAt);
+
+  const availableDateFormatted = format(
+    availableAt,
+    "EEEE ' • ' dd ' de ' MMMM ' • ' HH'h'mm",
+    {
+      locale: ptBR,
+    },
+  );
+
   return (
     <a href={`/${slug}`}>
-      <span className="text-gray-300">{avaliableAt.toString()}</span>
+      <span className="text-gray-300">{availableDateFormatted}</span>
 
       <div className="rounded border border-gray-500 p-4 mt-2">
-        <LessonHeader lessonType={lessonType} isAvaliable />
+        <LessonHeader lessonType={lessonType} isAvailable={isAvailable} />
         <strong className="text-gray-200 mt-5 block">{title}</strong>
       </div>
     </a>
