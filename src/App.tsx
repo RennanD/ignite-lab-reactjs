@@ -1,36 +1,5 @@
-import { gql, useQuery } from '@apollo/client';
-
-const GET_LESSONS_QUERY = gql`
-  query {
-    lessons {
-      id
-      title
-      slug
-
-      teacher {
-        name
-      }
-    }
-  }
-`;
-
-type Lesson = {
-  id: string;
-  title: string;
-  slug: string;
-  teacher: {
-    name: string;
-  };
-};
+import { Home } from './pages/Home';
 
 export default function App() {
-  const { data } = useQuery<{ lessons: Lesson[] }>(GET_LESSONS_QUERY);
-
-  return (
-    <ul>
-      {data?.lessons.map(lesson => (
-        <li key={lesson.id}>{lesson.title}</li>
-      ))}
-    </ul>
-  );
+  return <Home />;
 }
