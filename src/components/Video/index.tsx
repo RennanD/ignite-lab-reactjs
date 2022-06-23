@@ -1,17 +1,66 @@
 import { DefaultUi, Player, Youtube } from '@vime/react';
 import { DiscordLogo, FileArrowDown, Image, Lightning } from 'phosphor-react';
+import { gql, useQuery } from '@apollo/client';
 import { ComplementLink } from '../ComplementLink';
 import { Teacher } from '../Teacher';
 
 import '@vime/core/themes/default.css';
 
-export function Video(): JSX.Element {
+type VideoProps = {
+  slug: string;
+};
+
+type GetLessonBySlugResponse = {
+  lesson: {
+    id: string;
+    title: string;
+    videoId: string;
+    description: string;
+    teacher: {
+      name: string;
+      bio: string;
+      avatarURL: string;
+    };
+  };
+};
+
+const GET_LESSON_QUERY = gql`
+  query GetLessonBySlug($slug: String) {
+    lesson(where: { slug: $slug }) {
+      id
+      title
+      videoId
+      description
+      teacher {
+        name
+        avatarURL
+        bio
+      }
+    }
+  }
+`;
+
+export function Video({ slug }: VideoProps): JSX.Element {
+  const { data } = useQuery<GetLessonBySlugResponse>(GET_LESSON_QUERY, {
+    variables: {
+      slug,
+    },
+  });
+
+  if (!data) {
+    return (
+      <div className="flex-1 items-center justify-center">
+        <p>Carregando</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1">
       <div className="bg-black flex justify-center">
         <div className="h-full w-full max-w-[1100px] max-h-[60vh] aspect-video">
           <Player>
-            <Youtube videoId="7QSGhP97u5Y" />
+            <Youtube videoId={data.lesson.videoId} />
             <DefaultUi />
           </Player>
         </div>
@@ -20,19 +69,15 @@ export function Video(): JSX.Element {
       <div className="p-8 max-w-[1100px] mx-auto">
         <div className="flex items-start gap-16">
           <div className="flex-1">
-            <h1 className="text-2xl font-bold">Aula 03 - Player de Vídeo</h1>
+            <h1 className="text-2xl font-bold">{data.lesson.title}</h1>
             <p className="mt-4 text-gray-200 leading-relaxed">
-              Lorem ipsum is placeholder text commonly used in the graphic,
-              print, and publishing industries for previewing layouts and visual
-              mockups. Lorem ipsum is placeholder text commonly used in the
-              graphic, print, and publishing industries for previewing layouts
-              and visual mockups.
+              {data.lesson.description}
             </p>
 
             <Teacher
-              avatar="https://github.com/rennand.png"
-              name="Rennan Oliveira"
-              bio="Software Enginner at Grupo Pensar"
+              avatar={data.lesson.teacher.avatarURL}
+              name={data.lesson.teacher.name}
+              bio={data.lesson.teacher.bio}
             />
           </div>
 
